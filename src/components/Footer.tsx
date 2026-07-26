@@ -1,22 +1,24 @@
 import Link from 'next/link';
 import Logo from './Logo';
 
+const currentYear = new Date().getFullYear();
+
 export default function Footer() {
   return (
-    <footer className="border-t border-gray-100 dark:border-gray-800 bg-gray-50/80 dark:bg-gray-900/50">
+    <footer className="border-t" style={{ borderColor: 'var(--border)', background: 'var(--bg-muted)' }}>
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          <div className="space-y-3">
-            <Link href="/" className="inline-flex items-center gap-2 text-gray-900 dark:text-white">
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="sm:col-span-2 lg:col-span-1 space-y-3">
+            <Link href="/" className="inline-flex items-center gap-2" style={{ color: 'var(--text)' }}>
               <Logo />
             </Link>
-            <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed max-w-xs">
+            <p className="text-sm leading-relaxed max-w-xs" style={{ color: 'var(--text-muted)' }}>
               Free online utility tools for everyday tasks. Fast, private, and always free.
             </p>
           </div>
 
           <div>
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-4">Tools</h3>
+            <h3 className="text-xs font-semibold uppercase tracking-wider mb-4" style={{ color: 'var(--text-dim)' }}>Popular Tools</h3>
             <div className="grid grid-cols-2 gap-2">
               <FooterLink href="/tools/password-generator">Password Generator</FooterLink>
               <FooterLink href="/tools/qr-code-generator">QR Code Generator</FooterLink>
@@ -24,21 +26,36 @@ export default function Footer() {
               <FooterLink href="/tools/unit-converter">Unit Converter</FooterLink>
               <FooterLink href="/tools/word-counter">Word Counter</FooterLink>
               <FooterLink href="/tools/hash-generator">Hash Generator</FooterLink>
+              <FooterLink href="/tools/percentage-calculator">Percentage Calc</FooterLink>
+              <FooterLink href="/tools/emoji-picker">Emoji Picker</FooterLink>
             </div>
           </div>
 
           <div>
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-4">Links</h3>
+            <h3 className="text-xs font-semibold uppercase tracking-wider mb-4" style={{ color: 'var(--text-dim)' }}>Links</h3>
             <div className="flex flex-col gap-2">
               <FooterLink href="/">Home</FooterLink>
               <FooterLink href="/tools">All Tools</FooterLink>
+              <FooterLink href="/privacy">Privacy Policy</FooterLink>
+              <FooterLink href="/terms">Terms of Service</FooterLink>
+            </div>
+          </div>
+
+          <div>
+            <h3 className="text-xs font-semibold uppercase tracking-wider mb-4" style={{ color: 'var(--text-dim)' }}>Categories</h3>
+            <div className="flex flex-col gap-2">
+              <FooterLink href="/tools#calculators">Calculators</FooterLink>
+              <FooterLink href="/tools#generators">Generators</FooterLink>
+              <FooterLink href="/tools#converters">Converters</FooterLink>
+              <FooterLink href="/tools#text-tools">Text Tools</FooterLink>
+              <FooterLink href="/tools#encoders">Encoders</FooterLink>
             </div>
           </div>
         </div>
 
-        <div className="mt-10 pt-6 border-t border-gray-200 dark:border-gray-800 flex flex-col items-center justify-between gap-4 sm:flex-row">
-          <p className="text-xs text-gray-400 dark:text-gray-500">
-            &copy; {new Date().getFullYear()} ToolHive. Free online utility tools.
+        <div className="mt-10 pt-6 border-t flex flex-col items-center justify-between gap-4 sm:flex-row" style={{ borderColor: 'var(--border)' }}>
+          <p className="text-xs" style={{ color: 'var(--text-dim)' }}>
+            &copy; {currentYear} ToolHive. Free online utility tools.
           </p>
         </div>
       </div>
@@ -50,7 +67,8 @@ function FooterLink({ href, children }: { href: string; children: React.ReactNod
   return (
     <Link
       href={href}
-      className="text-sm text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200"
+      className="text-sm transition-colors duration-200"
+      style={{ color: 'var(--text-muted)' }}
     >
       {children}
     </Link>

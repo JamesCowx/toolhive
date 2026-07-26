@@ -17,9 +17,9 @@ export default function HomePage() {
 
         <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 text-center">
           <div className="animate-fade-in-up">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-primary-200 dark:border-primary-800 bg-primary-50 dark:bg-primary-900/30 px-4 py-1.5 text-xs font-semibold text-primary-700 dark:text-primary-300 mb-6">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-primary-200 dark:border-primary-800 bg-primary-50 dark:bg-primary-900/30 px-4 py-1.5 text-xs font-semibold text-primary-700 dark:text-primary-300 mb-6">
               <span className="h-1.5 w-1.5 rounded-full bg-primary-500 animate-pulse" />
-              20 Free Tools Available
+              28 Free Tools Available
             </span>
           </div>
 

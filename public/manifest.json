@@ -1,0 +1,17 @@
+{
+  "name": "ToolHive - Free Online Utility Tools",
+  "short_name": "ToolHive",
+  "description": "Free online utility tools: calculators, generators, converters, text tools and more.",
+  "start_url": "/toolhive/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0c8ee9",
+  "icons": [
+    {
+      "src": "/toolhive/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

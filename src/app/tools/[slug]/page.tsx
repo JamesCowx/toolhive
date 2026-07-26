@@ -46,6 +46,14 @@ export default function ToolPage({ params }: { params: { slug: string } }) {
     'hash-generator': ToolComponents.HashGenerator,
     'url-encoder': ToolComponents.UrlEncoder,
     'color-converter': ToolComponents.ColorConverter,
+    'percentage-calculator': ToolComponents.PercentageCalculator,
+    'age-calculator': ToolComponents.AgeCalculator,
+    'binary-hex-converter': ToolComponents.BinaryHexConverter,
+    'tip-calculator': ToolComponents.TipCalculator,
+    'json-formatter': ToolComponents.JsonFormatter,
+    'stopwatch': ToolComponents.Stopwatch,
+    'emoji-picker': ToolComponents.EmojiPicker,
+    'morse-code': ToolComponents.MorseCode,
   };
 
   const Component = componentMap[params.slug];
