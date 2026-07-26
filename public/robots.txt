@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://toolhive.app/sitemap.xml
