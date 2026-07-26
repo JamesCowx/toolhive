@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { copyToClipboard } from '@/lib/utils';
+import CopyButton from '@/components/CopyButton';
 
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr];
@@ -45,39 +45,49 @@ export default function ListRandomizer() {
   return (
     <div className="tool-section">
       <div>
-        <label className="label-text">Enter items (one per line)</label>
-        <textarea className="input-field min-h-[150px] resize-y font-mono text-sm" value={input} onChange={e => setInput(e.target.value)} placeholder="Item 1&#10;Item 2&#10;Item 3" />
-        <p className="text-xs text-gray-400 mt-1">{getItems().length} items</p>
+        <label className="label-premium">Enter items (one per line)</label>
+        <textarea className="input-premium min-h-[150px] resize-y font-mono text-sm" value={input} onChange={e => setInput(e.target.value)} placeholder="Item 1&#10;Item 2&#10;Item 3" />
+        <p className="text-xs text-gray-400 dark:text-gray-500 mt-1.5">{getItems().length} items</p>
       </div>
 
       <div className="flex flex-wrap gap-2">
-        <button onClick={handleShuffle} className="btn-primary">Shuffle</button>
-        <button onClick={handleSort} className="btn-secondary">Sort A-Z</button>
-        <button onClick={handlePick} className="btn-secondary">Pick Random</button>
+        <button onClick={handleShuffle} className="btn-premium">
+          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+          Shuffle
+        </button>
+        <button onClick={handleSort} className="btn-outline">Sort A-Z</button>
+        <button onClick={handlePick} className="btn-outline">Pick Random</button>
       </div>
 
       {picked && (
-        <div className="rounded-xl bg-primary-50 p-4 text-center">
-          <p className="text-sm text-gray-600">Random Pick:</p>
-          <p className="text-xl font-bold text-primary-700">{picked}</p>
+        <div className="rounded-2xl bg-gradient-to-br from-primary-50 to-primary-100 dark:from-primary-900/20 dark:to-primary-800/20 border border-primary-200/50 dark:border-primary-700/50 p-6 text-center animate-scale-in">
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Random Pick:</p>
+          <p className="text-2xl font-bold text-primary-700 dark:text-primary-300">{picked}</p>
         </div>
       )}
 
       {result.length > 0 && (
-        <div className="space-y-2">
+        <div className="animate-fade-in-up space-y-3">
           <div className="flex justify-between items-center">
-            <span className="text-sm text-gray-500">{result.length} items</span>
-            <button onClick={() => copyToClipboard(result.join('\n'))} className="btn-secondary text-xs py-1.5 px-3">Copy</button>
+            <span className="text-sm text-gray-500 dark:text-gray-400">{result.length} items</span>
+            <CopyButton text={result.join('\n')} />
           </div>
-          <div className="rounded-xl bg-gray-50 border border-gray-200 p-4">
+          <div className="bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-2xl p-4 divide-y divide-gray-100 dark:divide-gray-700/50">
             {result.map((item, i) => (
-              <div key={i} className="py-1 border-b border-gray-100 last:border-0 text-sm">{i + 1}. {item}</div>
+              <div key={i} className="py-2 first:pt-0 last:pb-0 text-sm text-gray-700 dark:text-gray-300 flex items-center gap-3">
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-primary-100 dark:bg-primary-900/30 text-xs font-bold text-primary-600 dark:text-primary-400">{i + 1}</span>
+                {item}
+              </div>
             ))}
           </div>
         </div>
       )}
 
-      {!input && <p className="text-center text-sm text-gray-400">Enter a list of items to get started</p>}
+      {!input && !result.length && !picked && (
+        <p className="text-center text-sm text-gray-400 dark:text-gray-500">Enter a list of items to get started</p>
+      )}
     </div>
   );
 }

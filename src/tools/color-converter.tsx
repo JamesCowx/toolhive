@@ -1,10 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { copyToClipboard } from '@/lib/utils';
+import CopyButton from '@/components/CopyButton';
 
 function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
-  const m = hex.match(/^#?([a-f0-9]{6})$/i);
+  const m = hex.replace(/^#/, '').match(/^([a-f0-9]{6})$/i);
   if (!m) return null;
   return { r: parseInt(m[1].slice(0, 2), 16), g: parseInt(m[1].slice(2, 4), 16), b: parseInt(m[1].slice(4, 6), 16) };
 }
@@ -83,38 +83,40 @@ export default function ColorConverter() {
   return (
     <div className="tool-section">
       {validColor && (
-        <div className="h-20 rounded-xl border-2 border-gray-200" style={{ backgroundColor: hex }}>
+        <div className="h-24 rounded-2xl border-2 border-gray-200 dark:border-gray-700 shadow-inner transition-all duration-300" style={{ backgroundColor: hex }}>
           <div className="flex items-center justify-center h-full">
-            <code className="bg-white/80 px-3 py-1 rounded-lg text-sm font-mono shadow-sm">{hex}</code>
+            <code className="bg-white/90 dark:bg-gray-900/90 px-4 py-1.5 rounded-xl text-sm font-mono shadow-lg">{hex}</code>
           </div>
         </div>
       )}
 
       <div>
-        <label className="label-text">HEX</label>
+        <label className="label-premium">HEX</label>
         <div className="flex gap-2">
-          <input className="input-field font-mono" value={hex} onChange={e => fromHex(e.target.value)} placeholder="#ff0000" />
-          {hex && <button onClick={() => copyToClipboard(hex)} className="btn-secondary shrink-0">Copy</button>}
+          <input className="input-premium font-mono flex-1" value={hex} onChange={e => fromHex(e.target.value)} placeholder="#ff0000" />
+          {hex && <CopyButton text={hex} />}
         </div>
       </div>
 
       <div>
-        <label className="label-text">RGB</label>
+        <label className="label-premium">RGB</label>
         <div className="flex gap-2">
-          <input className="input-field font-mono" value={rgb} onChange={e => fromRgb(e.target.value)} placeholder="255, 0, 0" />
-          {rgb && <button onClick={() => copyToClipboard(rgb)} className="btn-secondary shrink-0">Copy</button>}
+          <input className="input-premium font-mono flex-1" value={rgb} onChange={e => fromRgb(e.target.value)} placeholder="255, 0, 0" />
+          {rgb && <CopyButton text={rgb} />}
         </div>
       </div>
 
       <div>
-        <label className="label-text">HSL</label>
+        <label className="label-premium">HSL</label>
         <div className="flex gap-2">
-          <input className="input-field font-mono" value={hsl} onChange={e => fromHsl(e.target.value)} placeholder="0, 100%, 50%" />
-          {hsl && <button onClick={() => copyToClipboard(hsl)} className="btn-secondary shrink-0">Copy</button>}
+          <input className="input-premium font-mono flex-1" value={hsl} onChange={e => fromHsl(e.target.value)} placeholder="0, 100%, 50%" />
+          {hsl && <CopyButton text={hsl} />}
         </div>
       </div>
 
-      {error && <p className="text-sm text-red-600 bg-red-50 rounded-xl p-3">{error}</p>}
+      {error && (
+        <div className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl p-4 animate-fade-in">{error}</div>
+      )}
     </div>
   );
 }

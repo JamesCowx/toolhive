@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { copyToClipboard } from '@/lib/utils';
+import CopyButton from '@/components/CopyButton';
 
 const WORDS = [
   'lorem', 'ipsum', 'dolor', 'sit', 'amet', 'consectetur', 'adipiscing', 'elit',
@@ -51,37 +51,34 @@ export default function LoremIpsum() {
     }
   }
 
-  async function handleCopy() {
-    if (result) await copyToClipboard(result);
-  }
-
   return (
     <div className="tool-section">
       <div className="flex gap-2">
         {(['words', 'sentences', 'paragraphs'] as Mode[]).map(m => (
-          <button key={m} onClick={() => setMode(m)} className={`btn-${mode === m ? 'primary' : 'secondary'} capitalize`}>{m}</button>
+          <button key={m} onClick={() => setMode(m)} className={`btn-${mode === m ? 'premium' : 'outline'} capitalize`}>{m}</button>
         ))}
       </div>
 
       <div className="flex items-end gap-4">
         <div className="flex-1">
-          <label className="label-text">Number of {mode}</label>
-          <input type="number" min="1" max="100" className="input-field" value={count} onChange={e => setCount(Number(e.target.value))} />
+          <label className="label-premium">Number of {mode}</label>
+          <input type="number" min="1" max="100" className="input-premium" value={count} onChange={e => setCount(Number(e.target.value))} />
         </div>
-        <button onClick={generate} className="btn-primary">Generate</button>
+        <button onClick={generate} className="btn-premium">Generate</button>
       </div>
 
       {result && (
-        <div className="space-y-2">
-          <div className="flex justify-end">
-            <button onClick={handleCopy} className="btn-secondary text-xs py-1.5 px-3">Copy</button>
+        <div className="animate-fade-in-up space-y-3">
+          <div className="flex justify-end gap-2">
+            <button onClick={() => { setResult(''); }} className="btn-outline text-xs !py-1.5 !px-3">Clear</button>
+            <CopyButton text={result} />
           </div>
-          <textarea readOnly value={result} className="input-field min-h-[200px] resize-y font-serif text-sm leading-relaxed" />
+          <textarea readOnly value={result} className="input-premium min-h-[200px] resize-y font-serif text-sm leading-relaxed" />
         </div>
       )}
 
       {!result && (
-        <p className="text-center text-sm text-gray-400">Click Generate to create Lorem Ipsum text</p>
+        <p className="text-center text-sm text-gray-400 dark:text-gray-500">Click Generate to create Lorem Ipsum text</p>
       )}
     </div>
   );

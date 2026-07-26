@@ -4,7 +4,14 @@ import { useState } from 'react';
 
 type UnitCategory = 'length' | 'weight' | 'temperature' | 'volume';
 
-const units: Record<UnitCategory, { label: string; value: string; toBase: (v: number) => number; fromBase: (v: number) => number }[]> = {
+interface UnitDef {
+  label: string;
+  value: string;
+  toBase: (v: number) => number;
+  fromBase: (v: number) => number;
+}
+
+const units: Record<UnitCategory, UnitDef[]> = {
   length: [
     { label: 'Meters', value: 'm', toBase: v => v, fromBase: v => v },
     { label: 'Kilometers', value: 'km', toBase: v => v * 1000, fromBase: v => v / 1000 },
@@ -41,6 +48,12 @@ const units: Record<UnitCategory, { label: string; value: string; toBase: (v: nu
   ],
 };
 
+const swapIcon = (
+  <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+  </svg>
+);
+
 export default function UnitConverter() {
   const [category, setCategory] = useState<UnitCategory>('length');
   const [fromUnit, setFromUnit] = useState('m');
@@ -60,45 +73,62 @@ export default function UnitConverter() {
     setResult(converted.toLocaleString(undefined, { maximumFractionDigits: 6 }));
   }
 
+  function swap() {
+    const tmp = fromUnit; setFromUnit(toUnit); setToUnit(tmp);
+    if (result) setTimeout(convert, 0);
+  }
+
   const catUnits = units[category];
 
   return (
     <div className="tool-section">
       <div className="flex flex-wrap gap-2">
         {(Object.keys(units) as UnitCategory[]).map(c => (
-          <button key={c} onClick={() => { setCategory(c); const u = units[c][0]; setFromUnit(u.value); setToUnit(units[c][1]?.value ?? u.value); }} className={`btn-${category === c ? 'primary' : 'secondary'} capitalize`}>{c}</button>
+          <button key={c} onClick={() => { setCategory(c); setFromUnit(units[c][0].value); setToUnit(units[c][1]?.value ?? units[c][0].value); setResult(''); }} className={`btn-${category === c ? 'premium' : 'outline'} capitalize`}>{c}</button>
         ))}
       </div>
 
       <div>
-        <label className="label-text">Value</label>
-        <input type="number" className="input-field" value={value} onChange={e => setValue(e.target.value)} />
+        <label className="label-premium">Value</label>
+        <input type="number" className="input-premium" value={value} onChange={e => { setValue(e.target.value); setResult(''); }} />
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-[1fr_auto_1fr] gap-3 items-end">
         <div>
-          <label className="label-text">From</label>
-          <select className="select-field" value={fromUnit} onChange={e => setFromUnit(e.target.value)}>
+          <label className="label-premium">From</label>
+          <select className="input-premium" value={fromUnit} onChange={e => { setFromUnit(e.target.value); setResult(''); }}>
             {catUnits.map(u => <option key={u.value} value={u.value}>{u.label}</option>)}
           </select>
         </div>
+        <button onClick={swap} className="pb-2 text-gray-400 hover:text-primary-500 transition-colors" title="Swap units">
+          {swapIcon}
+        </button>
         <div>
-          <label className="label-text">To</label>
-          <select className="select-field" value={toUnit} onChange={e => setToUnit(e.target.value)}>
+          <label className="label-premium">To</label>
+          <select className="input-premium" value={toUnit} onChange={e => { setToUnit(e.target.value); setResult(''); }}>
             {catUnits.map(u => <option key={u.value} value={u.value}>{u.label}</option>)}
           </select>
         </div>
       </div>
 
-      <button onClick={convert} className="btn-primary w-full">Convert</button>
+      <button onClick={convert} className="btn-premium w-full">Convert</button>
 
       {result && (
-        <div className="text-center rounded-xl bg-primary-50 p-4">
-          <p className="text-sm text-gray-600">
-            {value} {catUnits.find(u => u.value === fromUnit)?.label} =
+        <div className="rounded-2xl bg-gradient-to-br from-primary-50 to-primary-100 dark:from-primary-900/20 dark:to-primary-800/20 border border-primary-200/50 dark:border-primary-700/50 p-6 text-center animate-scale-in">
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">
+            {value} {catUnits.find(u => u.value === fromUnit)?.label}
           </p>
-          <p className="text-2xl font-bold text-primary-700">{result} {catUnits.find(u => u.value === toUnit)?.label}</p>
+          <p className="text-4xl sm:text-5xl font-extrabold tracking-tight text-primary-700 dark:text-primary-300">
+            {result}
+          </p>
+          <p className="text-lg font-semibold text-primary-600 dark:text-primary-400 mt-2">
+            {catUnits.find(u => u.value === toUnit)?.label}
+          </p>
         </div>
+      )}
+
+      {!result && (
+        <p className="text-center text-sm text-gray-400 dark:text-gray-500">Enter a value and click Convert</p>
       )}
     </div>
   );

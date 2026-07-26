@@ -1,19 +1,19 @@
 'use client';
 
 import { useState } from 'react';
-import { copyToClipboard } from '@/lib/utils';
+import CopyButton from '@/components/CopyButton';
 
 type CaseType = 'upper' | 'lower' | 'title' | 'camel' | 'pascal' | 'kebab' | 'snake' | 'sentence';
 
 const caseTypes: { value: CaseType; label: string }[] = [
-  { value: 'upper', label: 'UPPER CASE' },
-  { value: 'lower', label: 'lower case' },
-  { value: 'title', label: 'Title Case' },
+  { value: 'upper', label: 'UPPER' },
+  { value: 'lower', label: 'lower' },
+  { value: 'title', label: 'Title' },
   { value: 'camel', label: 'camelCase' },
   { value: 'pascal', label: 'PascalCase' },
   { value: 'kebab', label: 'kebab-case' },
   { value: 'snake', label: 'snake_case' },
-  { value: 'sentence', label: 'Sentence case' },
+  { value: 'sentence', label: 'Sentence' },
 ];
 
 function convert(text: string, type: CaseType): string {
@@ -48,24 +48,24 @@ export default function TextCaseConverter() {
 
   return (
     <div className="tool-section">
-      <textarea className="input-field min-h-[120px] resize-y font-mono text-sm" value={input} onChange={e => handleInput(e.target.value)} placeholder="Type or paste text here..." />
+      <textarea className="input-premium min-h-[120px] resize-y font-mono text-sm" value={input} onChange={e => handleInput(e.target.value)} placeholder="Type or paste text here..." />
 
       <div className="flex flex-wrap gap-2">
         {caseTypes.map(ct => (
-          <button key={ct.value} onClick={() => handleCase(ct.value)} className={`btn-${selectedCase === ct.value ? 'primary' : 'secondary'} text-xs`}>{ct.label}</button>
+          <button key={ct.value} onClick={() => handleCase(ct.value)} className={`btn-${selectedCase === ct.value ? 'premium' : 'outline'} text-xs`}>{ct.label}</button>
         ))}
       </div>
 
       {output && (
-        <div className="space-y-2">
+        <div className="animate-fade-in-up space-y-2">
           <div className="flex justify-end">
-            <button onClick={() => copyToClipboard(output)} className="btn-secondary text-xs py-1.5 px-3">Copy</button>
+            <CopyButton text={output} />
           </div>
-          <textarea readOnly value={output} className="input-field min-h-[120px] resize-y font-mono text-sm" />
+          <textarea readOnly value={output} className="input-premium min-h-[120px] resize-y font-mono text-sm" />
         </div>
       )}
 
-      {!input && <p className="text-center text-sm text-gray-400">Type text above and select a case to convert</p>}
+      {!input && <p className="text-center text-sm text-gray-400 dark:text-gray-500">Type text above and select a case to convert</p>}
     </div>
   );
 }

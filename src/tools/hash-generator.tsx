@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { copyToClipboard } from '@/lib/utils';
+import CopyButton from '@/components/CopyButton';
 
 type HashAlgo = 'MD5' | 'SHA-1' | 'SHA-256' | 'SHA-512';
 
@@ -35,7 +35,6 @@ function md5(input: string): string {
     6,10,15,21,6,10,15,21,6,10,15,21,6,10,15,21,
   ];
   const F: ((x: number, y: number, z: number) => number)[] = [s, t, u, v];
-
   let bits = new Uint8Array([...new TextEncoder().encode(input), 0x80]);
   const len = input.length * 8;
   while (bits.length % 64 !== 56) bits = new Uint8Array([...bits, 0]);
@@ -44,26 +43,23 @@ function md5(input: string): string {
   lenView.setUint32(0, len, true);
   lenView.setUint32(4, 0, true);
   const padded = new Uint8Array([...bits, ...new Uint8Array(lenBuf)]);
-
   let h0 = 0x67452301, h1 = 0xefcdab89, h2 = 0x98badcfe, h3 = 0x10325476;
-
   for (let i = 0; i < padded.length; i += 64) {
     const w = new Uint32Array(16);
     const dv = new DataView(padded.buffer, padded.byteOffset + i, 64);
     for (let j = 0; j < 16; j++) w[j] = dv.getUint32(j * 4, true);
-
     let a = h0, b = h1, c = h2, d = h3;
     for (let j = 0; j < 64; j++) {
       const g = Math.floor(j / 16);
       const f = F[g](b, c, d);
       const k = K[j % 16 + g * 16];
       const si = S[j];
-      const temp = rot(a + f + w[j < 16 ? j : j < 32 ? (5 * j + 1) % 16 : j < 48 ? (3 * j + 5) % 16 : (7 * j) % 16] + k, si);
+      const idx = j < 16 ? j : j < 32 ? (5 * j + 1) % 16 : j < 48 ? (3 * j + 5) % 16 : (7 * j) % 16;
+      const temp = rot(a + f + w[idx] + k, si);
       a = d; d = c; c = b; b = (b + temp) | 0;
     }
     h0 = (h0 + a) | 0; h1 = (h1 + b) | 0; h2 = (h2 + c) | 0; h3 = (h3 + d) | 0;
   }
-
   const hex = (n: number) => (n >>> 0).toString(16).padStart(8, '');
   return hex(h0) + hex(h1) + hex(h2) + hex(h3);
 }
@@ -87,40 +83,55 @@ export default function HashGenerator() {
     try {
       const h = await computeHash(input, algo);
       setHash(h);
-    } catch {
-      setHash('Error computing hash');
-    }
+    } catch { setHash('Error computing hash'); }
     setLoading(false);
   }
 
   return (
     <div className="tool-section">
       <div>
-        <label className="label-text">Text to Hash</label>
-        <textarea className="input-field min-h-[100px] resize-y font-mono text-sm" value={input} onChange={e => setInput(e.target.value)} placeholder="Enter text..." />
+        <label className="label-premium">Text to Hash</label>
+        <textarea className="input-premium min-h-[100px] resize-y font-mono text-sm" value={input} onChange={e => { setInput(e.target.value); setHash(''); }} placeholder="Enter text..." />
       </div>
 
       <div className="flex flex-wrap gap-2">
         {algos.map(a => (
-          <button key={a.value} onClick={() => setAlgo(a.value)} className={`btn-${algo === a.value ? 'primary' : 'secondary'}`}>{a.label}</button>
+          <button key={a.value} onClick={() => setAlgo(a.value)} className={`btn-${algo === a.value ? 'premium' : 'outline'}`}>{a.label}</button>
         ))}
       </div>
 
-      <button onClick={generate} disabled={loading || !input.trim()} className="btn-primary w-full">
-        {loading ? 'Computing...' : 'Generate Hash'}
+      <button onClick={generate} disabled={loading || !input.trim()} className="btn-premium w-full">
+        {loading ? (
+          <span className="flex items-center gap-2">
+            <svg className="h-5 w-5 animate-spin" viewBox="0 0 24 24" fill="none">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+            </svg>
+            Computing...
+          </span>
+        ) : (
+          <span className="flex items-center gap-2">
+            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+            Generate Hash
+          </span>
+        )}
       </button>
 
       {hash && (
-        <div className="space-y-2">
+        <div className="animate-fade-in-up space-y-2">
           <div className="flex justify-between items-center">
-            <label className="label-text mb-0">{algo} Hash</label>
-            <button onClick={() => copyToClipboard(hash)} className="btn-secondary text-xs py-1.5 px-3">Copy</button>
+            <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">{algo} Hash</span>
+            <CopyButton text={hash} />
           </div>
-          <div className="result-box text-xs break-all">{hash}</div>
+          <div className="bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-2xl p-4 font-mono text-xs break-all text-gray-900 dark:text-white select-all">{hash}</div>
         </div>
       )}
 
-      {!input && <p className="text-center text-sm text-gray-400">Enter text and select an algorithm to hash</p>}
+      {!input && !hash && (
+        <p className="text-center text-sm text-gray-400 dark:text-gray-500">Enter text and select an algorithm to hash</p>
+      )}
     </div>
   );
 }
